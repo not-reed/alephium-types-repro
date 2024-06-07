@@ -13,7 +13,13 @@ const isValid = computed(() => {
   }
 })
 
-const isContract = computed(() => isValid ? bs58.decode(address.value)[0] === 0x03 : false)
+const isContract = computed(() => {
+  try {
+    return isValid ? bs58.decode(address.value)[0] === 0x03 : false
+  } catch {
+    return false
+  }
+})
 </script>
 
 <template>
@@ -26,14 +32,15 @@ const isContract = computed(() => isValid ? bs58.decode(address.value)[0] === 0x
       </div>
 
       <div class="text-center text-xs opacity-50">
-        Is {{ address.length > 8 ? `'${address.slice(0, 4)}...${address.slice(-4)}'` : '____' }} a valid address?
+        Is {{ address.length > 8 ? `'${address.slice(0, 4)}...${address.slice(-4)}'` : address || '_____' }} a valid
+        address?
       </div>
 
 
       <div class="flex items-center justify-center font-bold text-9xl">
         <div class="text-emerald-400" v-if="isValid">Yes</div>
         <div class="text-rose-400" v-else-if="address.length">No</div>
-        <div>&nbsp;</div>
+        <div v-else>&nbsp;</div>
       </div>
 
       <div v-if="isValid" class="grid grid-cols-2 gap-8">
